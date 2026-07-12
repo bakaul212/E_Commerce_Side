@@ -197,6 +197,30 @@ listingData.unshift(completeProduct);
     />
   );
 }
+// 🔒 PROTECTED PAGE LOGIC: ইউজার '/items/manage' ভিউতে থাকলে এই ড্যাশবোর্ড টেবিলটি দেখাবে
+if (currentView === 'manage-items') {
+  return (
+    <ManageProducts 
+      products={listingData} 
+      onDeleteProduct={(id) => {
+        // অ্যারে থেকে নির্দিষ্ট প্রোডাক্টটি ডিলিট করার কোড (যেহেতু listingData ডাইরেক্ট অ্যারে, তাই আমরা ফিল্টার করে পুশ করব বা রি-রেন্ডার ট্রিগার করব)
+        const index = listingData.findIndex(p => p.id === id);
+        if (index !== -1) {
+          listingData.splice(index, 1);
+          // স্টেট রি-রেন্ডার করার জন্য ভিউ রিসেট বা ফোর্স রি-রেন্ডার
+          setCurrentView('explore');
+          setTimeout(() => setCurrentView('manage-items'), 0);
+        }
+      }}
+      onViewProduct={(id) => {
+        // প্রোডাক্টটি ভিউ করার জন্য ওটার আইডি সিলেক্ট করে মেইন ভিউতে পাঠিয়ে দেবে
+        setSelectedProductId(id);
+        setCurrentView('explore');
+      }}
+      onBack={() => setCurrentView('explore')}
+    />
+  );
+}
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col antialiased">

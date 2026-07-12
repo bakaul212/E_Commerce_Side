@@ -1,7 +1,19 @@
 import { Trash2, Eye, LayoutGrid } from 'lucide-react';
 
 interface ManageProductsProps {
-  products: any[];
+  products: {
+    id: number;
+    title: string;
+    desc: string;
+    fullDesc?: string;
+    price: string;
+    rating: string;
+    date: string;
+    location: string;
+    images: string[];
+    specs?: Record<string, unknown>;
+    reviews?: unknown[];
+  }[];
   onDeleteProduct: (id: number) => void;
   onViewProduct: (id: number) => void;
   onBack: () => void;
