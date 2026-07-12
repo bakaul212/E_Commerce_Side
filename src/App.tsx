@@ -8,6 +8,7 @@ import {
   Calendar, ArrowLeft, CheckCircle, MessageSquare
 } from 'lucide-react';
 import { ExplorePage } from './components/ExplorePage';
+import { AuthPages } from './components/AuthPages';
 
 
 const sliderData = [
@@ -134,6 +135,7 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   
   // State for Navigation between Home and Details Page
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -154,6 +156,10 @@ export default function App() {
       clearTimeout(loadTimer);
     };
   }, []);
+
+  if (!user) {
+    return <AuthPages onAuthSuccess={(loggedInUser) => setUser(loggedInUser)} />;
+  }
 
   const nextSlide = () => setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev + 1));
   const prevSlide = () => setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev - 1));
