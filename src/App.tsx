@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { ExplorePage } from './components/ExplorePage';
 import { AuthPages } from './components/AuthPages';
+import { AddProduct } from './components/AddProduct';
+import { ManageProducts } from './components/ManageProducts';
 
 
 const sliderData = [
@@ -136,6 +138,7 @@ export default function App() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-items'>('explore');
   
   // State for Navigation between Home and Details Page
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -157,15 +160,43 @@ export default function App() {
     };
   }, []);
 
-  if (!user) {
-    return <AuthPages onAuthSuccess={(loggedInUser) => setUser(loggedInUser)} />;
-  }
-
   const nextSlide = () => setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev + 1));
   const prevSlide = () => setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev - 1));
 
   // Find the currently selected product details object
   const activeProduct = listingData.find(p => p.id === selectedProductId);
+
+  // 🔒 PROTECTED PAGE LOGIC: ইউজার লগইন না থাকলে সোজা লগইন স্ক্রিনে আটকে রাখবে
+if (!user) {
+  return <AuthPages onAuthSuccess={(loggedInUser) => setUser(loggedInUser)} />;
+}
+
+// 📌 ইউজার যদি '/items/add' বাটন প্রেস করে তবে এই প্রোটেক্টেড ফর্ম পেজটি রেন্ডার করবে
+if (currentView === 'add-item') {
+  return (
+    <AddProduct 
+   onAddProduct={(newProduct) => {
+  // নতুন প্রোডাক্টের সাথে একটি ফাঁকা specs অবজেক্ট যোগ করে লিস্টের শুরুতে দেওয়া হলো
+//  তার বদলে হুবহু এই কোডটি লিখুন:
+// 🔽 'as any' এর বদলে এই কোডটুকু হুবহু বসিয়ে দিন:
+const completeProduct = { 
+  ...newProduct, 
+  specs: {
+    Material: 'N/A',
+    "Max Weight Capacity": 'N/A',
+    Armrests: 'N/A',
+    "Gas Lift Class": 'N/A'
+  }, 
+  reviews: [] 
+} as unknown as typeof listingData[0]; // 👈 এটা কোনো 'any' ছাড়া একদম লিগ্যাল ট্রিক!
+  // 🔽 ১৯১ নম্বর লাইনের ঠিক উপরে এই লাইনটি বসিয়ে দিন:
+listingData.unshift(completeProduct);
+  setCurrentView('explore');
+}}
+      onCancel={() => setCurrentView('explore')}
+    />
+  );
+}
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col antialiased">
