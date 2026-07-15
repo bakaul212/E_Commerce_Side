@@ -1,19 +1,17 @@
 import { useState } from 'react';
 import { ShoppingBag, Menu, X, User, LogOut, PlusCircle, Settings } from 'lucide-react';
 
-// 💡 প্রফেশনাল ও ক্লিন Props ইন্টারফেস
 interface NavbarProps {
   currentView: string;
-  setCurrentView: (view: 'explore' | 'add-item' | 'manage-items' | 'about' | 'contact') => void;
-  user: { name: string; email: string } | null; // App.tsx থেকে মঙ্গোডিবি ইউজার স্টেট রিসিভ করছি
-  onLogout: () => void; // লগআউট লজিক হ্যান্ডেল করার জন্য
+  setCurrentView: (view: 'explore' | 'add-item' | 'manage-items' | 'about' | 'contact' | 'login') => void;
+  user: { name: string; email: string } | null;
+  onLogout: () => void;
 }
 
 export const Navbar = ({ currentView, setCurrentView, user, onLogout }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // পেজ চেঞ্জ করার সময় মোবাইল মেনু অটোমেটিক বন্ধ করার জন্য
-  const handleNavigation = (view: 'explore' | 'add-item' | 'manage-items' | 'about' | 'contact') => {
+  const handleNavigation = (view: 'explore' | 'add-item' | 'manage-items' | 'about' | 'contact' | 'login') => {
     setCurrentView(view);
     setIsOpen(false);
   };
@@ -53,10 +51,8 @@ export const Navbar = ({ currentView, setCurrentView, user, onLogout }: NavbarPr
               Contact
             </button>
             
-            {/* 🔐 ডাইনামিক ইউজার কন্ডিশন (রিয়েল ডাটাবেজ বেসড) */}
             {user ? (
               <>
-                {/* Add Product Button */}
                 <button 
                   onClick={() => handleNavigation('add-item')} 
                   className={`font-medium text-sm transition-colors flex items-center gap-1 ${currentView === 'add-item' ? 'text-indigo-600' : 'text-slate-600 hover:text-indigo-600'}`}
@@ -64,7 +60,6 @@ export const Navbar = ({ currentView, setCurrentView, user, onLogout }: NavbarPr
                   <PlusCircle className="w-4 h-4" /> Add Item
                 </button>
 
-                {/* Manage Items Button */}
                 <button 
                   onClick={() => handleNavigation('manage-items')} 
                   className={`font-medium text-sm transition-colors flex items-center gap-1 ${currentView === 'manage-items' ? 'text-indigo-600' : 'text-slate-600 hover:text-indigo-600'}`}
@@ -72,7 +67,6 @@ export const Navbar = ({ currentView, setCurrentView, user, onLogout }: NavbarPr
                   <Settings className="w-4 h-4" /> Manage Items
                 </button>
 
-                {/* Logout */}
                 <button 
                   onClick={onLogout} 
                   className="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1"
@@ -81,12 +75,12 @@ export const Navbar = ({ currentView, setCurrentView, user, onLogout }: NavbarPr
                 </button>
               </>
             ) : (
-              /* ইউজার লগইন না থাকলে সরাসরি সাইন-ইন/রেজিস্টার অপশন পাবে */
+              /* ✅ এখানে শুধু 'Login' করা হয়েছে */
               <button 
-                onClick={() => (window.location.href = '/login')} 
+                onClick={() => handleNavigation('login')} 
                 className="bg-indigo-600 text-white hover:bg-indigo-700 px-5 py-2 rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center gap-1"
               >
-                <User className="w-4 h-4" /> Login / Register
+                <User className="w-4 h-4" /> Login
               </button>
             )}
           </div>
@@ -122,11 +116,12 @@ export const Navbar = ({ currentView, setCurrentView, user, onLogout }: NavbarPr
               </button>
             </>
           ) : (
+            /* ✅ এখানেও শুধু 'Login' করা হয়েছে */
             <button 
-              onClick={() => { window.location.href = '/login'; setIsOpen(false); }} 
+              onClick={() => handleNavigation('login')} 
               className="w-full text-center bg-indigo-600 text-white px-4 py-2 rounded-xl text-base font-medium shadow-xs"
             >
-              Login / Register
+              Login
             </button>
           )}
         </div>

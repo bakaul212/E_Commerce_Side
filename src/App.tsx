@@ -50,9 +50,12 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  // কোনো ডিফল্ট অবজেক্ট রাখবেন না, শুরুতে null থাকবে
+  
+  // শুরুতে user থাকবে null
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
-  const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-items' | 'about' | 'contact'>('explore');
+  
+  // ভিউ ট্র্যাকিং স্টেট ('login' ভিউ যুক্ত করা হয়েছে)
+const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-items' | 'about' | 'contact' | 'login'>('explore');
   
   // 🔄 মক ডাটাবেজ ট্র্যাকিং বাদ দিয়ে স্টেট ও MongoDB _id (string) ট্র্যাকিং
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -112,13 +115,10 @@ export default function App() {
       text: reviewText
     };
 
-    // লোকাল স্টেট আপডেট করা হচ্ছে যাতে সাথে সাথে দেখা যায়
     setProducts(prevProducts => 
       prevProducts.map(prod => {
         if (prod._id === selectedProductId) {
           const updatedReviews = prod.reviews ? [...prod.reviews, newReview] : [newReview];
-          
-          // নতুন রেটিং এভারেজ হিসাব করা (ঐচ্ছিক ভিজ্যুয়াল আপডেট)
           const totalRating = updatedReviews.reduce((sum, r) => sum + r.rating, 0);
           const newAvgRating = (totalRating / updatedReviews.length).toFixed(1);
 
@@ -132,19 +132,43 @@ export default function App() {
       })
     );
 
-    // ইনপুট ফিল্ড রিসেট করা
     setReviewName('');
     setReviewRating(5);
     setReviewText('');
   };
 
-  // 🔒 PROTECTED PAGE LOGIC: লগইন ভেরিফিকেশন
-  if (!user) {
-    return <AuthPages onAuthSuccess={(loggedInUser) => setUser(loggedInUser)} />;
+  // 🔒 প্রোটেক্টেড পেজগুলোতে যাওয়ার সময় অথেন্টিকেশন চেক হ্যান্ডলার
+  const handleViewChange = (view: 'explore' | 'add-item' | 'manage-items' | 'about' | 'contact' | 'login') => {
+    if ((view === 'add-item' || view === 'manage-items') && !user) {
+      // যদি লগইন না থাকে, তবে ইউজারকে লগইন পেজে রিডাইরেক্ট করবে
+      setCurrentView('login');
+    } else {
+      setCurrentView(view);
+    }
+  };
+
+  /* ==========================================
+     ১. LOGIN PAGE (যদি ইউজার লগইন না থাকে ও রিডাইরেক্ট হয়)
+     ========================================== */
+  if (currentView === 'login') {
+    return (
+      <AuthPages 
+        onAuthSuccess={(loggedInUser) => {
+          setUser(loggedInUser);
+          setCurrentView('explore'); // লগইন সফল হলে হোম পেজে নিয়ে যাবে
+        }} 
+      />
+    );
   }
 
-  // 📌 ৪. নতুন প্রোডাক্ট অ্যাড করার পর স্টেট সিঙ্ক
+  /* ==========================================
+     ২. ADD PRODUCT PAGE (প্রোটেক্টেড রাউট)
+     ========================================== */
   if (currentView === 'add-item') {
+    if (!user) {
+      setCurrentView('login');
+      return null;
+    }
     return (
       <AddProduct 
         onAddProduct={(newProduct) => {
@@ -156,16 +180,21 @@ export default function App() {
     );
   }
 
-  // 🔒 ৫. প্রোডাক্ট ডিলিট এবং ভিউ করার ড্যাশবোর্ড লজিক (সরাসরি ডাটাবেজ রিফ্লেকশন)
+  /* ==========================================
+     ৩. MANAGE PRODUCTS PAGE (প্রোটেক্টেড রাউট)
+     ========================================== */
   if (currentView === 'manage-items') {
+    if (!user) {
+      setCurrentView('login');
+      return null;
+    }
     return (
       <ManageProducts 
         products={products.map((p, index) => ({
           ...p,
-          id: index // number টাইপ ম্যাচ করার জন্য সাময়িক ইউনিক নম্বর
+          id: index
         }))} 
         onDeleteProduct={async (id) => {
-          // রিয়েল MongoDB _id বের করার লজিক
           const realProduct = products.find((_, index) => index === Number(id));
           if (!realProduct) return;
 
@@ -200,7 +229,9 @@ export default function App() {
     );
   }
 
-  // 📄 About এবং Contact পেজ রেন্ডার কন্ডিশন
+  /* ==========================================
+     ৪. ABOUT / CONTACT PAGE (পাবলিক রাউট)
+     ========================================== */
   if (currentView === 'about' || currentView === 'contact') {
     return (
       <AboutContact 
@@ -214,12 +245,12 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 flex flex-col antialiased">
       <Navbar 
         currentView={currentView} 
-        setCurrentView={setCurrentView} 
+        setCurrentView={handleViewChange} // প্রোটেকশন হ্যান্ডলার কল করা হলো
         user={user} 
         onLogout={() => {
           localStorage.removeItem('token'); 
           setUser(null); 
-          setCurrentView('explore'); // লগআউট হলে হোম পেজে নিয়ে যাবে
+          setCurrentView('explore'); 
         }} 
       />
 
@@ -530,12 +561,10 @@ export default function App() {
           <ExplorePage 
             listingData={products.map((p) => ({
               ...p,
-              // 💡 সাময়িক ইনডেক্স বাদ দিয়ে সরাসরি MongoDB-র অরিজিনাল _id ব্যবহার করা হলো
               id: p._id 
             }))} 
             isLoading={isLoading} 
             onViewDetails={(id) => { 
-              // 🔍 সরাসরি MongoDB _id দিয়ে প্রোডাক্ট খুঁজে বের করা হচ্ছে
               const realProduct = products.find((p) => p._id === id);
               if (realProduct) {
                 setSelectedProductId(realProduct._id); 
@@ -694,16 +723,16 @@ export default function App() {
           <div>
             <h4 className="text-white font-bold text-base mb-4 tracking-wide">Quick Links</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><a href="#" className="hover:text-indigo-400 transition-colors">Home Landing</a></li>
-              <li><a href="#" className="hover:text-indigo-400 transition-colors">All Products</a></li>
-              <li><a href="#" className="hover:text-indigo-400 transition-colors">Featured Collections</a></li>
+              <li><button onClick={() => setCurrentView('explore')} className="hover:text-indigo-400 transition-colors text-left">Home Landing</button></li>
+              <li><button onClick={() => setCurrentView('explore')} className="hover:text-indigo-400 transition-colors text-left">All Products</button></li>
+              <li><button onClick={() => setCurrentView('about')} className="hover:text-indigo-400 transition-colors text-left">About Us</button></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-white font-bold text-base mb-4 tracking-wide">Customer Support</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><a href="#" className="hover:text-indigo-400 transition-colors">Track Your Order</a></li>
+              <li><button onClick={() => setCurrentView('contact')} className="hover:text-indigo-400 transition-colors text-left">Contact & Help</button></li>
               <li><a href="#" className="hover:text-indigo-400 transition-colors">Shipping & Delivery</a></li>
               <li><a href="#" className="hover:text-indigo-400 transition-colors">Privacy Policy</a></li>
             </ul>
