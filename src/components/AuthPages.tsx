@@ -1,6 +1,6 @@
-//  নতুন এই কোডটুকু বসিয়ে দিন:
 import { useState } from 'react';
 import { Mail, Lock, User, Eye, EyeOff, LogIn, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
+
 interface AuthPagesProps {
   onAuthSuccess: (user: { name: string; email: string }) => void;
 }
@@ -14,9 +14,10 @@ export function AuthPages({ onAuthSuccess }: AuthPagesProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  // Validation & Message States
+  // Validation, Loading & Message States
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // 1. Validation Logic
   const validateForm = () => {
@@ -37,20 +38,55 @@ export function AuthPages({ onAuthSuccess }: AuthPagesProps) {
     return true;
   };
 
-  // 2. Submit Handler
-  const handleSubmit = (e: React.FormEvent) => {
+  // 2. Submit Handler (Real MongoDB Backend Integration)
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // Simulate Server Request
-    setSuccess(isLogin ? 'Logging in successfully...' : 'Registration successful!');
-    
-    setTimeout(() => {
-      onAuthSuccess({
-        name: isLogin ? 'Demo User' : name,
-        email: email
+    setIsLoading(true);
+    setError('');
+    setSuccess('');
+
+    // আপনার ব্যাকএন্ডের রিয়েল ইউআরএল (প্রয়োজন হলে পোর্ট ৩০০০ বা ৫০০০ এ চেঞ্জ করুন)
+    const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/auth`;
+    const endpoint = isLogin ? `${backendUrl}/login` : `${backendUrl}/register`;
+    const payload = isLogin ? { email, password } : { name, email, password };
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       });
-    }, 1200);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong!');
+      }
+
+      // সাকসেস হলে টোকেন লোকাল স্টোরেজে সেভ হবে
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+
+      setSuccess(isLogin ? 'Logging in successfully...' : 'Registration successful! Redirecting...');
+      
+      setTimeout(() => {
+        onAuthSuccess({
+          name: data.user?.name || name,
+          email: data.user?.email || email,
+        });
+      }, 1200);
+
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to connect to the server.';
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 3. Demo Login Button Helper (Auto-fill)
@@ -100,6 +136,7 @@ export function AuthPages({ onAuthSuccess }: AuthPagesProps) {
                   type="text" value={name} onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-indigo-500 transition-colors"
+                  required
                 />
               </div>
             </div>
@@ -114,6 +151,7 @@ export function AuthPages({ onAuthSuccess }: AuthPagesProps) {
                 type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-indigo-500 transition-colors"
+                required
               />
             </div>
           </div>
@@ -127,6 +165,7 @@ export function AuthPages({ onAuthSuccess }: AuthPagesProps) {
                 type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-indigo-500 transition-colors"
+                required
               />
               <button 
                 type="button" onClick={() => setShowPassword(!showPassword)}
@@ -140,9 +179,12 @@ export function AuthPages({ onAuthSuccess }: AuthPagesProps) {
           {/* Submit Button */}
           <button 
             type="submit" 
-            className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-xs"
+            disabled={isLoading}
+            className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-xs disabled:bg-indigo-400 disabled:cursor-not-allowed"
           >
-            {isLogin ? (
+            {isLoading ? (
+              <span>Processing...</span>
+            ) : isLogin ? (
               <>Sign In <LogIn className="w-4 h-4" /></>
             ) : (
               <>Create Account <UserPlus className="w-4 h-4" /></>
@@ -167,21 +209,21 @@ export function AuthPages({ onAuthSuccess }: AuthPagesProps) {
           <div className="flex-grow border-t border-slate-200"></div>
         </div>
 
-      {/* Social Logins */}
-<div className="grid grid-cols-2 gap-4">
-  <button 
-    type="button" onClick={() => alert('Google authentication coming soon via backend!')}
-    className="flex items-center justify-center gap-2 border border-slate-200 rounded-xl py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 transition-colors"
-  >
-    <span className="text-rose-500 text-sm font-black">G</span> Google
-  </button>
-  <button 
-    type="button" onClick={() => alert('Facebook authentication coming soon via backend!')}
-    className="flex items-center justify-center gap-2 border border-slate-200 rounded-xl py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 transition-colors"
-  >
-    <span className="text-blue-600 text-sm font-black">F</span> Facebook
-  </button>
-</div>
+        {/* Social Logins */}
+        <div className="grid grid-cols-2 gap-4">
+          <button 
+            type="button" onClick={() => alert('Google authentication coming soon via backend!')}
+            className="flex items-center justify-center gap-2 border border-slate-200 rounded-xl py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 transition-colors"
+          >
+            <span className="text-rose-500 text-sm font-black">G</span> Google
+          </button>
+          <button 
+            type="button" onClick={() => alert('Facebook authentication coming soon via backend!')}
+            className="flex items-center justify-center gap-2 border border-slate-200 rounded-xl py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 transition-colors"
+          >
+            <span className="text-blue-600 text-sm font-black">F</span> Facebook
+          </button>
+        </div>
 
         {/* Toggle between Login and Register */}
         <div className="text-center pt-2">

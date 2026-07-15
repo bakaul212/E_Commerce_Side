@@ -1,45 +1,43 @@
 import { useState, useMemo } from 'react';
 import { Search, SlidersHorizontal, Star, Calendar, MapPin, ArrowUpRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// আপনার App.tsx এর ডাটা টাইপের সাথে ম্যাচ করানো হলো
 interface Product {
-  id: number;
+  id?: number | string;
+  _id?: string;
   title: string;
-  category?: string; // category অপশনাল করা হলো যাতে ডাটাতে না থাকলেও ক্র্যাশ না করে
+  category?: string;
   desc: string;
   fullDesc?: string;
-  price: string | number; // string বা number দুইটাই সাপোর্ট করবে
+  price: string | number;
   rating: string | number;
   date: string;
   location: string;
   images: string[];
- //  তার বদলে এই টাইপটি বসিয়ে দিন:
-//  তার বদলে এই কোডটি বসিয়ে দিন:
-specs?: Record<string, string | number | boolean | null | undefined>;
+  specs?: Record<string, string | number | boolean | null | undefined>;
 }
 
 interface ExplorePageProps {
   listingData: Product[];
   isLoading: boolean;
-  onViewDetails: (id: number) => void;
+onViewDetails: (id: string | number) => void;
 }
 
-const ITEMS_PER_PAGE = 2; // প্রতি পেজে ২টি করে প্রোডাক্ট দেখাবে
+const ITEMS_PER_PAGE = 6; // পেজিনেশন একটু বাড়িয়ে ৬ করা হলো যাতে দেখতে সুন্দর লাগে
 
 export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePageProps) {
   // States for Filter, Search, Sort & Pagination
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [maxPrice, setMaxPrice] = useState(500);
+  const [maxPrice, setMaxPrice] = useState(2000); // 💸 বাজেট রেঞ্জ বাড়িয়ে ২০০০ করা হলো যাতে আইফোন শো করে
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [sortBy, setSortBy] = useState('default');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Core Filtering & Sorting Logic
+  // 🔍 ৪. রিয়েল-টাইম সার্চ এবং অ্যাডভান্সড ফিল্টারিং সচল করা হলো
   const filteredAndSortedListings = useMemo(() => {
     let result = [...listingData];
 
-    // সার্চ ফিল্টার
+    // ক. সার্চ ফিল্টার (Title, Desc ও Location ট্র্যাক করবে)
     if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase();
       result = result.filter(item => 
@@ -48,7 +46,7 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
       );
     }
 
-    // ক্যাটাগরি ফিল্টার (ডাটাতে না থাকলে 'Electronics' বা 'Home & Living' টাইটেল দেখে অনুমান করবে)
+    // খ. ক্যাটাগরি ফিল্টার
     if (selectedCategory !== 'All') {
       result = result.filter(item => {
         const itemCategory = item.category || (item.title.toLowerCase().includes('phone') || item.title.toLowerCase().includes('laptop') || item.title.toLowerCase().includes('electronics') ? 'Electronics' : 'Home & Living');
@@ -56,18 +54,18 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
       });
     }
 
-    // বাজেট ফিল্টার
+    // গ. বাজেট ফিল্টার (স্ট্রিং থেকে ডলার সাইন রিমুভ করে নাম্বারে কনভার্ট করা হচ্ছে)
     result = result.filter(item => {
       const priceNum = typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price;
       return priceNum <= maxPrice;
     });
 
-    // লোকেশন ফিল্টার
+    // ঘ. লোকেশন ফিল্টার
     if (selectedLocation !== 'All') {
       result = result.filter(item => item.location.toLowerCase().includes(selectedLocation.toLowerCase()));
     }
 
-    // সর্টিং লজিক
+    //  Sorting Logic
     if (sortBy === 'price-low') {
       result.sort((a, b) => {
         const pA = typeof a.price === 'string' ? parseFloat(a.price.replace(/[^0-9.]/g, '')) : a.price;
@@ -91,7 +89,7 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
     return result;
   }, [listingData, searchQuery, selectedCategory, maxPrice, selectedLocation, sortBy]);
 
-  // Pagination Calculations & Safe Page Guard
+  // Pagination Calculations
   const totalPages = Math.ceil(filteredAndSortedListings.length / ITEMS_PER_PAGE);
   const safePage = currentPage > totalPages ? 1 : currentPage;
 
@@ -108,7 +106,7 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
   const resetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('All');
-    setMaxPrice(500);
+    setMaxPrice(2000);
     setSelectedLocation('All');
     setSortBy('default');
     setCurrentPage(1);
@@ -149,7 +147,7 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
             <span className="text-xs font-black text-indigo-600">${maxPrice}</span>
           </div>
           <input 
-            type="range" min="100" max="500" step="25"
+            type="range" min="50" max="2000" step="50"
             value={maxPrice}
             onChange={(e) => handleFilterChange(setMaxPrice, Number(e.target.value))}
             className="w-full accent-indigo-600 cursor-pointer"
@@ -217,9 +215,9 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
           ) : paginatedListings.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {paginatedListings.map((item) => (
-                <div key={item.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden h-[430px] flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                <div key={item._id || item.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden h-[430px] flex flex-col justify-between group hover:shadow-md transition-all duration-300">
                   <div className="h-44 w-full overflow-hidden bg-slate-100 relative">
-                    <img src={item.images[0]} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={item.images?.[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500'} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <span className="absolute top-3 right-3 bg-white/95 text-slate-800 font-black text-xs sm:text-sm px-2.5 py-1 rounded-lg shadow-xs">
                       {typeof item.price === 'number' ? `$${item.price.toFixed(2)}` : item.price}
                     </span>
@@ -243,7 +241,11 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
                     </div>
 
                     <button 
-                      onClick={() => onViewDetails(item.id)}
+                    onClick={() => {
+  if (item.id) {
+    onViewDetails(item.id);
+  }
+}}
                       className="w-full mt-4 bg-slate-950 group-hover:bg-indigo-600 text-white font-semibold py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5"
                     >
                       View Details & Specs <ArrowUpRight className="w-3.5 h-3.5" />

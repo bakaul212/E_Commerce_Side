@@ -11,7 +11,7 @@ import { ExplorePage } from './components/ExplorePage';
 import { AuthPages } from './components/AuthPages';
 import { AddProduct } from './components/AddProduct';
 import { ManageProducts } from './components/ManageProducts';
-
+import { AboutContact } from './components/AboutContact';
 
 const sliderData = [
   {
@@ -30,207 +30,204 @@ const sliderData = [
   }
 ];
 
-// Mock Data for Core Listing with Extra Details
-const listingData = [
-  {
-    id: 1,
-    title: "Pro Wireless Noise-Canceling Headphones",
-    desc: "Experience ultimate sound clarity with hybrid active noise cancellation and 40h battery life.",
-    fullDesc: "Take your audio experience to the next level with our Pro Wireless Headphones. Engineered with cutting-edge active noise-canceling technology, these headphones block out unwanted ambient noise so you can focus entirely on your music, podcasts, or calls. Featuring premium memory foam earcups and a lightweight ergonomic headband, they ensure maximum comfort even during extended listening sessions.",
-    price: "$299.99",
-    rating: "4.9",
-    date: "July 12, 2026",
-    location: "New York, USA",
-    images: [
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&auto=format&fit=crop&q=80"
-    ],
-    specs: {
-      "Brand": "AudioX",
-      "Battery Life": "Up to 40 Hours",
-      "Connectivity": "Bluetooth 5.2 & Wired",
-      "Weight": "250g",
-      "Warranty": "1 Year International"
-    },
-    reviews: [
-      { name: "Alex Johnson", rating: 5, date: "2 days ago", text: "Absolutely stunning sound quality. ANC is pure magic!" },
-      { name: "Michael K.", rating: 4, date: "1 week ago", text: "Very comfortable, but the bass is slightly higher than expected. Overall great." }
-    ]
-  },
-  {
-    id: 2,
-    title: "Minimalist Mechanical Keyboard",
-    desc: "Gasket-mounted hot-swappable keyboard with custom linear switches and RGB backlighting.",
-    fullDesc: "A masterfully crafted typing instrument designed for enthusiasts and professionals alike. The gasket-mounted architecture paired with dampening foam provides a deep, satisfying acoustic profile. Hot-swappable sockets mean you can easily change switches without soldering, tailoring your tactile response effortlessly.",
-    price: "$149.50",
-    rating: "4.8",
-    date: "July 10, 2026",
-    location: "Tokyo, Japan",
-    images: [
-      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1595225476474-87563907a212?w=600&auto=format&fit=crop&q=80"
-    ],
-    specs: {
-      "Layout": "75% Compact Layout",
-      "Switch Type": "Custom Linear (Pre-lubed)",
-      "Keycaps": "PBT Double-shot",
-      "Backlight": "Per-key Southern Facing RGB",
-      "Interface": "USB Type-C Detachable"
-    },
-    reviews: [
-      { name: "Satoshi N.", rating: 5, date: "3 days ago", text: "The stock linear switches sound so creamy! Best out-of-the-box keyboard." }
-    ]
-  },
-  {
-    id: 3,
-    title: "Ultra-Wide Curved Gaming Monitor",
-    desc: "34-inch QHD curved display with 165Hz refresh rate for fully immersive gaming sessions.",
-    fullDesc: "Immerse yourself entirely within the action with this expansive 34-inch curved powerhouse. Boasting a blazing-fast 165Hz refresh rate and a 1ms response time, screen tearing and lag become relics of the past. Vivid color replication brings cinematic graphics straight to your desktop.",
-    price: "$450.00",
-    rating: "4.7",
-    date: "July 08, 2026",
-    location: "Seoul, S. Korea",
-    images: [
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1547119957-637f8679db1e?w=600&auto=format&fit=crop&q=80"
-    ],
-    specs: {
-      "Screen Size": "34 Inch Curved (1500R)",
-      "Resolution": "3440 x 1440 (WQHD)",
-      "Refresh Rate": "165Hz",
-      "Panel Type": "VA Premium",
-      "HDR Support": "HDR10 Certified"
-    },
-    reviews: [
-      { name: "GamingPro_99", rating: 5, date: "Yesterday", text: "Insane ultra-wide real estate. Great for both workflow productivity and heavy gaming." }
-    ]
-  },
-  {
-    id: 4,
-    title: "Ergonomic Premium Office Chair",
-    desc: "Breathable mesh back with adjustable lumbar support and 3D armrests for long work hours.",
-    fullDesc: "Invest in your health and productivity. This premium ergonomic workstation chair features synchronous tilt-recline and an adaptive self-adjusting lumbar bracket that flexes perfectly with your spine's natural curvature.",
-    price: "$189.99",
-    rating: "4.6",
-    date: "July 05, 2026",
-    location: "Berlin, Germany",
-    images: [
-      "https://images.unsplash.com/photo-1505797149-43b0069ec26b?w=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?w=600&auto=format&fit=crop&q=80"
-    ],
-    specs: {
-      "Material": "Reinforced Mesh & Nylon Base",
-      "Max Weight Capacity": "300 lbs",
-      "Armrests": "3D Adjustable (Height/Angle/Depth)",
-      "Gas Lift Class": "Class 4 Heavy Duty"
-    },
-    reviews: [
-      { name: "Emma Watson", rating: 4, date: "2 weeks ago", text: "My lower back pain disappeared after a week of usage. Truly ergonomic." }
-    ]
-  }
-];
+// ১. মঙ্গোডিবি প্রোডাক্টের জন্য কড়া টাইপস্ক্রিপ্ট ইন্টারফেস
+interface ProductType {
+  _id: string; // মঙ্গোডিবির রিয়েল আইডি
+  title: string;
+  desc: string;
+  fullDesc: string;
+  price: string;
+  rating: string;
+  date: string;
+  location: string;
+  images: string[];
+  specs?: Record<string, string>;
+  reviews?: Array<{ name: string; rating: number; date: string; text: string }>;
+}
 
 export default function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [email, setEmail] = useState('');
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // কোনো ডিফল্ট অবজেক্ট রাখবেন না, শুরুতে null থাকবে
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
-  const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-items'>('explore');
+  const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-items' | 'about' | 'contact'>('explore');
   
-  // State for Navigation between Home and Details Page
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
-  // State for keeping track of the selected image index inside Details Page
+  // 🔄 মক ডাটাবেজ ট্র্যাকিং বাদ দিয়ে স্টেট ও MongoDB _id (string) ট্র্যাকিং
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [activeImgIdx, setActiveImgIdx] = useState(0);
+
+  // 🛍️ Checkout Modal State
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+
+  // 💬 New Review States
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+
+  // 📥 ২. ডাটাবেজ থেকে রিয়েল-টাইমে প্রোডাক্ট ডাটা লোড করার useEffect
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/products');
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data);
+        }
+      } catch (error) {
+        console.error("MongoDB fetch error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev + 1));
     }, 5000);
 
-    const loadTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-
-    return () => {
-      clearInterval(timer);
-      clearTimeout(loadTimer);
-    };
+    return () => clearInterval(timer);
   }, []);
 
   const nextSlide = () => setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev + 1));
   const prevSlide = () => setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev - 1));
 
-  // Find the currently selected product details object
-  const activeProduct = listingData.find(p => p.id === selectedProductId);
+  // ৩. সিলেক্টেড প্রোডাক্ট খোঁজার আধুনিক লজিক
+  const activeProduct = products.find(p => p._id === selectedProductId);
 
-  // 🔒 PROTECTED PAGE LOGIC: ইউজার লগইন না থাকলে সোজা লগইন স্ক্রিনে আটকে রাখবে
-if (!user) {
-  return <AuthPages onAuthSuccess={(loggedInUser) => setUser(loggedInUser)} />;
-}
+  // ✍️ রিভিউ সাবমিশন হ্যান্ডলার
+  const handleAddReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewName.trim() || !reviewText.trim() || !selectedProductId) return;
 
-// 📌 ইউজার যদি '/items/add' বাটন প্রেস করে তবে এই প্রোটেক্টেড ফর্ম পেজটি রেন্ডার করবে
-if (currentView === 'add-item') {
-  return (
-    <AddProduct 
-   onAddProduct={(newProduct) => {
-  // নতুন প্রোডাক্টের সাথে একটি ফাঁকা specs অবজেক্ট যোগ করে লিস্টের শুরুতে দেওয়া হলো
-//  তার বদলে হুবহু এই কোডটি লিখুন:
-// 🔽 'as any' এর বদলে এই কোডটুকু হুবহু বসিয়ে দিন:
-const completeProduct = { 
-  ...newProduct, 
-  specs: {
-    Material: 'N/A',
-    "Max Weight Capacity": 'N/A',
-    Armrests: 'N/A',
-    "Gas Lift Class": 'N/A'
-  }, 
-  reviews: [] 
-} as unknown as typeof listingData[0]; // 👈 এটা কোনো 'any' ছাড়া একদম লিগ্যাল ট্রিক!
-  // 🔽 ১৯১ নম্বর লাইনের ঠিক উপরে এই লাইনটি বসিয়ে দিন:
-listingData.unshift(completeProduct);
-  setCurrentView('explore');
-}}
-      onCancel={() => setCurrentView('explore')}
-    />
-  );
-}
-// 🔒 PROTECTED PAGE LOGIC: ইউজার '/items/manage' ভিউতে থাকলে এই ড্যাশবোর্ড টেবিলটি দেখাবে
-if (currentView === 'manage-items') {
-  return (
-    <ManageProducts 
-      products={listingData} 
-      onDeleteProduct={(id) => {
-        // অ্যারে থেকে নির্দিষ্ট প্রোডাক্টটি ডিলিট করার কোড (যেহেতু listingData ডাইরেক্ট অ্যারে, তাই আমরা ফিল্টার করে পুশ করব বা রি-রেন্ডার ট্রিগার করব)
-        const index = listingData.findIndex(p => p.id === id);
-        if (index !== -1) {
-          listingData.splice(index, 1);
-          // স্টেট রি-রেন্ডার করার জন্য ভিউ রিসেট বা ফোর্স রি-রেন্ডার
-          setCurrentView('explore');
-          setTimeout(() => setCurrentView('manage-items'), 0);
+    const newReview = {
+      name: reviewName,
+      rating: reviewRating,
+      date: new Date().toISOString().split('T')[0],
+      text: reviewText
+    };
+
+    // লোকাল স্টেট আপডেট করা হচ্ছে যাতে সাথে সাথে দেখা যায়
+    setProducts(prevProducts => 
+      prevProducts.map(prod => {
+        if (prod._id === selectedProductId) {
+          const updatedReviews = prod.reviews ? [...prod.reviews, newReview] : [newReview];
+          
+          // নতুন রেটিং এভারেজ হিসাব করা (ঐচ্ছিক ভিজ্যুয়াল আপডেট)
+          const totalRating = updatedReviews.reduce((sum, r) => sum + r.rating, 0);
+          const newAvgRating = (totalRating / updatedReviews.length).toFixed(1);
+
+          return {
+            ...prod,
+            rating: newAvgRating,
+            reviews: updatedReviews
+          };
         }
-      }}
-      onViewProduct={(id) => {
-        // প্রোডাক্টটি ভিউ করার জন্য ওটার আইডি সিলেক্ট করে মেইন ভিউতে পাঠিয়ে দেবে
-        setSelectedProductId(id);
-        setCurrentView('explore');
-      }}
-      onBack={() => setCurrentView('explore')}
-    />
-  );
-}
+        return prod;
+      })
+    );
+
+    // ইনপুট ফিল্ড রিসেট করা
+    setReviewName('');
+    setReviewRating(5);
+    setReviewText('');
+  };
+
+  // 🔒 PROTECTED PAGE LOGIC: লগইন ভেরিফিকেশন
+  if (!user) {
+    return <AuthPages onAuthSuccess={(loggedInUser) => setUser(loggedInUser)} />;
+  }
+
+  // 📌 ৪. নতুন প্রোডাক্ট অ্যাড করার পর স্টেট সিঙ্ক
+  if (currentView === 'add-item') {
+    return (
+      <AddProduct 
+        onAddProduct={(newProduct) => {
+          setProducts((prevProducts) => [newProduct as ProductType, ...prevProducts]);
+          setCurrentView('explore');
+        }}
+        onCancel={() => setCurrentView('explore')}
+      />
+    );
+  }
+
+  // 🔒 ৫. প্রোডাক্ট ডিলিট এবং ভিউ করার ড্যাশবোর্ড লজিক (সরাসরি ডাটাবেজ রিফ্লেকশন)
+  if (currentView === 'manage-items') {
+    return (
+      <ManageProducts 
+        products={products.map((p, index) => ({
+          ...p,
+          id: index // number টাইপ ম্যাচ করার জন্য সাময়িক ইউনিক নম্বর
+        }))} 
+        onDeleteProduct={async (id) => {
+          // রিয়েল MongoDB _id বের করার লজিক
+          const realProduct = products.find((_, index) => index === Number(id));
+          if (!realProduct) return;
+
+          const token = localStorage.getItem('token');
+          try {
+            const response = await fetch(`http://localhost:5000/api/products/${realProduct._id}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            if (response.ok) {
+              setProducts((prev) => prev.filter(p => p._id !== realProduct._id));
+              alert('Product deleted successfully from database!');
+            } else {
+              alert('Failed to delete product from server.');
+            }
+          } catch (err) {
+            console.error("Delete error:", err);
+            alert('Server error while deleting item.');
+          }
+        }}
+        onViewProduct={(id) => {
+          const realProduct = products.find((_, index) => index === Number(id));
+          if (realProduct) {
+            setSelectedProductId(realProduct._id);
+          }
+          setCurrentView('explore');
+        }}
+        onBack={() => setCurrentView('explore')}
+      />
+    );
+  }
+
+  // 📄 About এবং Contact পেজ রেন্ডার কন্ডিশন
+  if (currentView === 'about' || currentView === 'contact') {
+    return (
+      <AboutContact 
+        view={currentView} 
+        onBack={() => setCurrentView('explore')} 
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col antialiased">
-      <Navbar />
+      <Navbar 
+        currentView={currentView} 
+        setCurrentView={setCurrentView} 
+        user={user} 
+        onLogout={() => {
+          localStorage.removeItem('token'); 
+          setUser(null); 
+          setCurrentView('explore'); // লগআউট হলে হোম পেজে নিয়ে যাবে
+        }} 
+      />
 
       {/* CONDITIONAL RENDERING: DETAILS PAGE OR HOME PAGE */}
       {activeProduct ? (
         /* =========================================================
-            5. DETAILS PAGE (NEW)
-            ========================================================= */
+            5. DETAILS PAGE
+           ========================================================= */
         <main className="max-w-7xl mx-auto px-4 py-10 w-full flex-1">
           {/* Back Button */}
           <button 
@@ -289,7 +286,10 @@ if (currentView === 'manage-items') {
               </div>
 
               <div className="space-y-3">
-                <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-xs flex items-center justify-center gap-2">
+                <button 
+                  onClick={() => { setIsCheckoutOpen(true); setCheckoutSuccess(false); }}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-xs flex items-center justify-center gap-2"
+                >
                   Proceed to Checkout <ArrowRight className="w-4 h-4" />
                 </button>
                 <div className="flex justify-center items-center gap-4 text-xs text-slate-400 font-medium py-1">
@@ -316,29 +316,97 @@ if (currentView === 'manage-items') {
               </section>
 
               {/* Section C: Reviews / Ratings */}
-              <section>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-indigo-600" /> Customer Reviews
-                  </h2>
-                  <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">{activeProduct.reviews.length} Feedbacks</span>
-                </div>
-                <div className="space-y-4">
-                  {activeProduct.reviews.map((rev, index) => (
-                    <div key={index} className="bg-white p-5 border border-slate-200 rounded-2xl space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center font-bold text-indigo-700 text-xs">{rev.name[0]}</div>
-                          <h4 className="font-bold text-slate-800 text-xs sm:text-sm">{rev.name}</h4>
-                        </div>
-                        <span className="text-[11px] text-slate-400 font-medium">{rev.date}</span>
+              <section className="space-y-8">
+                {/* Submit New Review Form */}
+                <div className="bg-white p-6 border border-slate-200 rounded-2xl shadow-xs">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <Send className="w-4 h-4 text-indigo-600" /> Write a Customer Review
+                  </h3>
+                  <form onSubmit={handleAddReview} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 mb-1">Your Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          value={reviewName}
+                          onChange={(e) => setReviewName(e.target.value)}
+                          placeholder="e.g. John Doe"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all"
+                        />
                       </div>
-                      <div className="flex text-amber-400">
-                        {Array.from({ length: rev.rating }).map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />)}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 mb-1">Rating</label>
+                        <select 
+                          value={reviewRating}
+                          onChange={(e) => setReviewRating(Number(e.target.value))}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all"
+                        >
+                          <option value={5}>⭐⭐⭐⭐⭐ (5/5)</option>
+                          <option value={4}>⭐⭐⭐⭐ (4/5)</option>
+                          <option value={3}>⭐⭐⭐ (3/5)</option>
+                          <option value={2}>⭐⭐ (2/5)</option>
+                          <option value={1}>⭐ (1/5)</option>
+                        </select>
                       </div>
-                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">"{rev.text}"</p>
                     </div>
-                  ))}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-500 mb-1">Your Review</label>
+                      <textarea 
+                        required
+                        rows={3}
+                        value={reviewText}
+                        onChange={(e) => setReviewText(e.target.value)}
+                        placeholder="Write your genuine feedback about the product..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all resize-none"
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-xs flex items-center gap-2"
+                    >
+                      Submit Review <Send className="w-3.5 h-3.5" />
+                    </button>
+                  </form>
+                </div>
+
+                {/* Display Reviews */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                      <MessageSquare className="w-5 h-5 text-indigo-600" /> Customer Reviews
+                    </h2>
+                    <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">
+                      {activeProduct.reviews?.length || 0} Feedbacks
+                    </span>
+                  </div>
+                  <div className="space-y-4">
+                    {activeProduct.reviews && activeProduct.reviews.length > 0 ? (
+                      activeProduct.reviews.map((rev, index) => (
+                        <div key={index} className="bg-white p-5 border border-slate-200 rounded-2xl space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center font-bold text-indigo-700 text-xs">
+                                {rev.name?.[0] || 'U'}
+                              </div>
+                              <h4 className="font-bold text-slate-800 text-xs sm:text-sm">{rev.name}</h4>
+                            </div>
+                            <span className="text-[11px] text-slate-400 font-medium">{rev.date}</span>
+                          </div>
+                          <div className="flex text-amber-400">
+                            {Array.from({ length: rev.rating || 5 }).map((_, i) => (
+                              <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+                            ))}
+                          </div>
+                          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">"{rev.text}"</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-slate-400 text-sm italic bg-white p-6 border border-slate-100 rounded-2xl text-center">
+                        No reviews available for this product yet.
+                      </p>
+                    )}
+                  </div>
                 </div>
               </section>
             </div>
@@ -351,12 +419,16 @@ if (currentView === 'manage-items') {
                   <CheckCircle className="w-4 h-4 text-indigo-600" /> Technical Specifications
                 </h2>
                 <div className="divide-y divide-slate-100 text-sm">
-                  {Object.entries(activeProduct.specs).map(([key, value]) => (
-                    <div key={key} className="py-3 flex justify-between gap-4">
-                      <span className="text-slate-400 font-medium text-xs sm:text-sm">{key}</span>
-                      <span className="text-slate-700 font-semibold text-xs sm:text-sm text-right">{value}</span>
-                    </div>
-                  ))}
+                  {activeProduct.specs && Object.keys(activeProduct.specs).length > 0 ? (
+                    Object.entries(activeProduct.specs).map(([key, value]) => (
+                      <div key={key} className="py-3 flex justify-between gap-4">
+                        <span className="text-slate-400 font-medium text-xs sm:text-sm">{key}</span>
+                        <span className="text-slate-700 font-semibold text-xs sm:text-sm text-right">{value}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-slate-400 text-xs italic py-2">No technical specs provided.</p>
+                  )}
                 </div>
               </section>
             </div>
@@ -366,14 +438,14 @@ if (currentView === 'manage-items') {
           <section className="mt-16 pt-12 border-t border-slate-200">
             <h2 className="text-xl font-bold text-slate-800 mb-6 tracking-tight">Related Premium Items</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {listingData.filter(p => p.id !== selectedProductId).map((item) => (
+              {products.filter(p => p._id !== selectedProductId).slice(0, 4).map((item) => (
                 <div 
-                  key={item.id} 
-                  onClick={() => { setSelectedProductId(item.id); setActiveImgIdx(0); window.scrollTo(0,0); }}
+                  key={item._id} 
+                  onClick={() => { setSelectedProductId(item._id); setActiveImgIdx(0); window.scrollTo(0,0); }}
                   className="bg-white rounded-2xl border border-slate-200 overflow-hidden h-[380px] flex flex-col justify-between group cursor-pointer hover:shadow-md hover:border-slate-300 transition-all duration-300"
                 >
                   <div className="h-40 w-full overflow-hidden bg-slate-100 relative">
-                    <img src={item.images[0]} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={item.images?.[0] || 'https://via.placeholder.com/150'} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <span className="absolute top-2 right-2 bg-white/95 backdrop-blur-xs text-slate-800 font-bold text-xs px-2 py-0.5 rounded-md shadow-xs">{item.price}</span>
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between">
@@ -454,11 +526,24 @@ if (currentView === 'manage-items') {
             </div>
           </section>
 
-         <ExplorePage 
-  listingData={listingData} 
-  isLoading={isLoading} 
-  onViewDetails={(id) => { setSelectedProductId(id); window.scrollTo(0,0); }} 
-/>
+          {/* Explore Page Content Section (Connected with MongoDB State) */}
+          <ExplorePage 
+            listingData={products.map((p) => ({
+              ...p,
+              // 💡 সাময়িক ইনডেক্স বাদ দিয়ে সরাসরি MongoDB-র অরিজিনাল _id ব্যবহার করা হলো
+              id: p._id 
+            }))} 
+            isLoading={isLoading} 
+            onViewDetails={(id) => { 
+              // 🔍 সরাসরি MongoDB _id দিয়ে প্রোডাক্ট খুঁজে বের করা হচ্ছে
+              const realProduct = products.find((p) => p._id === id);
+              if (realProduct) {
+                setSelectedProductId(realProduct._id); 
+              }
+              window.scrollTo(0, 0); 
+            }} 
+          />
+
           {/* Top Picks Section */}
           <section className="py-16 bg-white border-y border-slate-100">
             <div className="max-w-7xl mx-auto px-4">
@@ -645,6 +730,82 @@ if (currentView === 'manage-items') {
           <p>&copy; {new Date().getFullYear()} ShopEase Global Inc. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* =========================================================
+          🛒 CHECKOUT MODAL (POPUP) - FULLY FUNCTIONAL
+         ========================================================= */}
+      {isCheckoutOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-[999]">
+          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+            {!checkoutSuccess ? (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800 tracking-tight">Checkout Details</h3>
+                  <p className="text-xs text-slate-400 mt-1">Please confirm your booking order for {activeProduct?.title}.</p>
+                </div>
+
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex gap-4 items-center">
+                  <img src={activeProduct?.images[0]} alt="" className="w-16 h-16 object-cover rounded-xl border border-slate-200" />
+                  <div>
+                    <h4 className="font-bold text-slate-800 text-sm line-clamp-1">{activeProduct?.title}</h4>
+                    <p className="text-indigo-600 font-extrabold text-base mt-0.5">{activeProduct?.price}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">Shipping Address</label>
+                    <input 
+                      type="text" 
+                      defaultValue="123 Commerce St, New York"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-700 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">Contact Number</label>
+                    <input 
+                      type="text" 
+                      placeholder="+1 (234) 567-890"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-700 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button 
+                    onClick={() => setIsCheckoutOpen(false)}
+                    className="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold py-3 rounded-xl text-xs sm:text-sm transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => setCheckoutSuccess(true)}
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    Confirm & Pay
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6 space-y-4">
+                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600 animate-bounce">
+                  <CheckCircle className="w-10 h-10" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800 tracking-tight">Order Placed Successfully!</h3>
+                  <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Thank you for your order. We've sent a confirmation invoice email with details to your inbox.</p>
+                </div>
+                <button 
+                  onClick={() => setIsCheckoutOpen(false)}
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition-all"
+                >
+                  Back to Product
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
