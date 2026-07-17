@@ -75,7 +75,7 @@ const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/products');
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/products`);
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
@@ -200,7 +200,7 @@ const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-
 
           const token = localStorage.getItem('token');
           try {
-            const response = await fetch(`http://localhost:5000/api/products/${realProduct._id}`, {
+       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/products/${realProduct._id}`, {
               method: 'DELETE',
               headers: {
                 'Authorization': `Bearer ${token}`
