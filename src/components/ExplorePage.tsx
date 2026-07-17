@@ -19,70 +19,76 @@ interface Product {
 interface ExplorePageProps {
   listingData: Product[];
   isLoading: boolean;
-onViewDetails: (id: string | number) => void;
+  onViewDetails: (id: string | number) => void;
 }
 
-const ITEMS_PER_PAGE = 6; // পেজিনেশন একটু বাড়িয়ে ৬ করা হলো যাতে দেখতে সুন্দর লাগে
+const ITEMS_PER_PAGE = 6; 
 
 export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePageProps) {
   // States for Filter, Search, Sort & Pagination
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [maxPrice, setMaxPrice] = useState(2000); // 💸 বাজেট রেঞ্জ বাড়িয়ে ২০০০ করা হলো যাতে আইফোন শো করে
+  const [maxPrice, setMaxPrice] = useState(2000); 
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [sortBy, setSortBy] = useState('default');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 🔍 ৪. রিয়েল-টাইম সার্চ এবং অ্যাডভান্সড ফিল্টারিং সচল করা হলো
+  // 🔍 ফিল্টারিং এবং সর্টিং লজিক ফিক্স করা হলো
   const filteredAndSortedListings = useMemo(() => {
-    let result = [...listingData];
+    // সেফটি গার্ড: যদি কোনো কারণে listingData আনডিফাইন্ড বা নাল আসে
+    let result = Array.isArray(listingData) ? [...listingData] : [];
 
-    // ক. সার্চ ফিল্টার (Title, Desc ও Location ট্র্যাক করবে)
+    // ক. সার্চ ফিল্টার
     if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase();
       result = result.filter(item => 
-        item.title.toLowerCase().includes(query) || 
-        item.desc.toLowerCase().includes(query)
+        item.title?.toLowerCase().includes(query) || 
+        item.desc?.toLowerCase().includes(query)
       );
     }
 
     // খ. ক্যাটাগরি ফিল্টার
     if (selectedCategory !== 'All') {
       result = result.filter(item => {
-        const itemCategory = item.category || (item.title.toLowerCase().includes('phone') || item.title.toLowerCase().includes('laptop') || item.title.toLowerCase().includes('electronics') ? 'Electronics' : 'Home & Living');
+        const itemCategory = item.category || 
+          (item.title?.toLowerCase().includes('phone') || 
+           item.title?.toLowerCase().includes('laptop') || 
+           item.title?.toLowerCase().includes('headphone') || 
+           item.title?.toLowerCase().includes('electronics') ? 'Electronics' : 'Home & Living');
         return itemCategory === selectedCategory;
       });
     }
 
-    // গ. বাজেট ফিল্টার (স্ট্রিং থেকে ডলার সাইন রিমুভ করে নাম্বারে কনভার্ট করা হচ্ছে)
+    // গ. বাজেট ফিল্টার (প্রাইস স্ট্রিং বা ডলার সাইন যাই থাকুক হ্যান্ডেল করবে)
     result = result.filter(item => {
+      if (item.price === undefined || item.price === null) return true;
       const priceNum = typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price;
-      return priceNum <= maxPrice;
+      return isNaN(priceNum) ? true : priceNum <= maxPrice;
     });
 
     // ঘ. লোকেশন ফিল্টার
     if (selectedLocation !== 'All') {
-      result = result.filter(item => item.location.toLowerCase().includes(selectedLocation.toLowerCase()));
+      result = result.filter(item => item.location?.toLowerCase().includes(selectedLocation.toLowerCase()));
     }
 
-    //  Sorting Logic
+    // Sorting Logic
     if (sortBy === 'price-low') {
       result.sort((a, b) => {
         const pA = typeof a.price === 'string' ? parseFloat(a.price.replace(/[^0-9.]/g, '')) : a.price;
         const pB = typeof b.price === 'string' ? parseFloat(b.price.replace(/[^0-9.]/g, '')) : b.price;
-        return pA - pB;
+        return (pA || 0) - (pB || 0);
       });
     } else if (sortBy === 'price-high') {
       result.sort((a, b) => {
         const pA = typeof a.price === 'string' ? parseFloat(a.price.replace(/[^0-9.]/g, '')) : a.price;
         const pB = typeof b.price === 'string' ? parseFloat(b.price.replace(/[^0-9.]/g, '')) : b.price;
-        return pB - pA;
+        return (pB || 0) - (pA || 0);
       });
     } else if (sortBy === 'rating') {
       result.sort((a, b) => {
         const rA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating;
         const rB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating;
-        return rB - rA;
+        return (rB || 0) - (rA || 0);
       });
     }
 
@@ -219,10 +225,10 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
                   <div className="h-44 w-full overflow-hidden bg-slate-100 relative">
                     <img src={item.images?.[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500'} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <span className="absolute top-3 right-3 bg-white/95 text-slate-800 font-black text-xs sm:text-sm px-2.5 py-1 rounded-lg shadow-xs">
-                      {typeof item.price === 'number' ? `$${item.price.toFixed(2)}` : item.price}
+                      {typeof item.price === 'number' ? `$${item.price.toFixed(2)}` : (item.price?.toString().startsWith('$') ? item.price : `$${item.price}`)}
                     </span>
                     <span className="absolute bottom-3 left-3 bg-indigo-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md">
-                      {item.category || (item.title.toLowerCase().includes('phone') || item.title.toLowerCase().includes('laptop') ? 'Electronics' : 'Home & Living')}
+                      {item.category || (item.title?.toLowerCase().includes('phone') || item.title?.toLowerCase().includes('laptop') ? 'Electronics' : 'Home & Living')}
                     </span>
                   </div>
 
@@ -241,11 +247,12 @@ export function ExplorePage({ listingData, isLoading, onViewDetails }: ExplorePa
                     </div>
 
                     <button 
-                    onClick={() => {
-  if (item.id) {
-    onViewDetails(item.id);
-  }
-}}
+                      onClick={() => {
+                        const targetId = item._id || item.id;
+                        if (targetId) {
+                          onViewDetails(targetId);
+                        }
+                      }}
                       className="w-full mt-4 bg-slate-950 group-hover:bg-indigo-600 text-white font-semibold py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5"
                     >
                       View Details & Specs <ArrowUpRight className="w-3.5 h-3.5" />
