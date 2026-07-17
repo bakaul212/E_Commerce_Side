@@ -63,15 +63,15 @@ export function AboutContact({ view, onBack }: AboutContactProps) {
         <div className="md:col-span-1 space-y-4">
           <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
             <Mail className="w-4 h-4 text-indigo-600 shrink-0" />
-            <div className="text-xs font-medium text-slate-700 truncate">support@marketplace.com</div>
+            <div className="text-xs font-medium text-slate-700 truncate">bakaul15-4163@diu.edu.bd</div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
             <Phone className="w-4 h-4 text-indigo-600 shrink-0" />
-            <div className="text-xs font-medium text-slate-700">+1 (555) 019-2834</div>
+            <div className="text-xs font-medium text-slate-700">01793097400</div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
             <MapPin className="w-4 h-4 text-indigo-600 shrink-0" />
-            <div className="text-xs font-medium text-slate-700">795 Folsom Ave, San Francisco</div>
+            <div className="text-xs font-medium text-slate-700">Chandpur, Bangladesh</div>
           </div>
         </div>
 
