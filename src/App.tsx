@@ -564,13 +564,24 @@ const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-
               id: p._id 
             }))} 
             isLoading={isLoading} 
-            onViewDetails={(id) => { 
-              const realProduct = products.find((p) => p._id === id);
-              if (realProduct) {
-                setSelectedProductId(realProduct._id); 
-              }
-              window.scrollTo(0, 0); 
-            }} 
+          onViewDetails={(id) => {
+  // ১. চেক করুন ইউজার লগইন আছে কি না (টোকেন আছে কি না)
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    alert("Please log in first to view details and specs!");
+    // যদি আপনি চান সরাসরি লগইন পেজে নিয়ে যাবে, তবে নিচের কমেন্ট করা কোডটি আনকমেন্ট করতে পারেন
+    // window.location.href = '/login'; 
+    return;
+  }
+
+  // ২. লগইন থাকলে নরমাল কাজ করবে
+  const realProduct = products.find((p) => p._id === id);
+  if (realProduct) {
+    setSelectedProductId(realProduct._id);
+  }
+  window.scrollTo(0, 0);
+}} 
           />
 
           {/* Top Picks Section */}
