@@ -753,15 +753,15 @@ const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-
             <h4 className="text-white font-bold text-base mb-4 tracking-wide">Contact Us</h4>
             <div className="flex items-start gap-3 text-sm">
               <MapPin className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
-              <span className="text-slate-400">123 Commerce St, Suite 500, New York, NY 10001</span>
+              <span className="text-slate-400">Chandpur, Bangladesh</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <Phone className="w-5 h-5 text-indigo-400 shrink-0" />
-              <a href="tel:+1234567890" className="text-slate-400 hover:text-indigo-400 transition-colors">+1 (234) 567-890</a>
+              <a href="tel:+1234567890" className="text-slate-400 hover:text-indigo-400 transition-colors">01793097400</a>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <Mail className="w-5 h-5 text-indigo-400 shrink-0" />
-              <a href="mailto:support@shopease.com" className="text-slate-400 hover:text-indigo-400 transition-colors">support@shopease.com</a>
+              <a href="mailto:support@shopease.com" className="text-slate-400 hover:text-indigo-400 transition-colors">bakaul15-4163@diu.edu.bd</a>
             </div>
           </div>
         </div>
