@@ -13,19 +13,20 @@ import { AddProduct } from './components/AddProduct';
 import { ManageProducts } from './components/ManageProducts';
 import { AboutContact } from './components/AboutContact';
 
+// 🖼️ সলিড ব্যাকগ্রাউন্ড কালারের বদলে প্রিমিয়াম রিয়াল-লাইফ ইমেজ যোগ করা হয়েছে
 const sliderData = [
   {
     title: "Discover the Latest Tech & Style Trends",
     subtitle: "Upgrade your lifestyle with our curated premium collection.",
     cta: "Shop Tech",
-    bg: "bg-slate-900 text-white",
+    image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=1600&auto=format&fit=crop", // 🎧 গ্যাজেট ও টেক ইমেজ
     accentText: "text-indigo-400"
   },
   {
     title: "Curated Pieces for Elevated Living",
     subtitle: "Explore unique handcrafted home goods designed for comfort.",
     cta: "Explore Home",
-    bg: "bg-indigo-950 text-white",
+    image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1600&auto=format&fit=crop", // 🏠 হোম ডেকর ইমেজ
     accentText: "text-amber-400"
   }
 ];
@@ -55,7 +56,7 @@ export default function App() {
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   
   // ভিউ ট্র্যাকিং স্টেট ('login' ভিউ যুক্ত করা হয়েছে)
-const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-items' | 'about' | 'contact' | 'login'>('explore');
+  const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-items' | 'about' | 'contact' | 'login'>('explore');
   
   // 🔄 মক ডাটাবেজ ট্র্যাকিং বাদ দিয়ে স্টেট ও MongoDB _id (string) ট্র্যাকিং
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -200,7 +201,7 @@ const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-
 
           const token = localStorage.getItem('token');
           try {
-       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/products/${realProduct._id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/products/${realProduct._id}`, {
               method: 'DELETE',
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -506,12 +507,22 @@ const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-
               style={{ transform: `translateX(-${currentSlide * 50}%)` }}
             >
               {sliderData.map((slide, index) => (
-                <div key={index} className={`w-1/2 h-full flex items-center justify-center px-6 sm:px-12 ${slide.bg}`}>
+                <div 
+                  key={index} 
+                  className="w-1/2 h-full flex items-center justify-center px-6 sm:px-12 text-white relative"
+                  // 🎨 সলিড কালার ক্লাসের পরিবর্তে ইনলাইন স্টাইলের মাধ্যমে ব্যাকগ্রাউন্ড ইমেজ ও ডার্ক ওভারলে বসানো হয়েছে
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(${slide.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                  }}
+                >
                   <div className="max-w-4xl text-center z-10">
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-4">
                       {slide.title.split('&').map((part, i) => i === 1 ? <span key={i} className={slide.accentText}>& {part}</span> : part)}
                     </h1>
-                    <p className="text-slate-300 text-base sm:text-lg max-w-xl mx-auto mb-8">
+                    <p className="text-slate-200 text-base sm:text-lg max-w-xl mx-auto mb-8 font-medium drop-shadow-xs">
                       {slide.subtitle}
                     </p>
                     <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3.5 rounded-xl shadow-md transition-all flex items-center gap-2 mx-auto group">
@@ -564,24 +575,22 @@ const [currentView, setCurrentView] = useState<'explore' | 'add-item' | 'manage-
               id: p._id 
             }))} 
             isLoading={isLoading} 
-          onViewDetails={(id) => {
-  // ১. চেক করুন ইউজার লগইন আছে কি না (টোকেন আছে কি না)
-  const token = localStorage.getItem('token');
-  
-  if (!token) {
-    alert("Please log in first to view details and specs!");
-    // যদি আপনি চান সরাসরি লগইন পেজে নিয়ে যাবে, তবে নিচের কমেন্ট করা কোডটি আনকমেন্ট করতে পারেন
-    // window.location.href = '/login'; 
-    return;
-  }
+            onViewDetails={(id) => {
+              // ১. চেক করুন ইউজার লগইন আছে কি না (টোকেন আছে কি না)
+              const token = localStorage.getItem('token');
+              
+              if (!token) {
+                alert("Please log in first to view details and specs!");
+                return;
+              }
 
-  // ২. লগইন থাকলে নরমাল কাজ করবে
-  const realProduct = products.find((p) => p._id === id);
-  if (realProduct) {
-    setSelectedProductId(realProduct._id);
-  }
-  window.scrollTo(0, 0);
-}} 
+              // ২. লগইন থাকলে নরমাল কাজ করবে
+              const realProduct = products.find((p) => p._id === id);
+              if (realProduct) {
+                setSelectedProductId(realProduct._id);
+              }
+              window.scrollTo(0, 0);
+            }} 
           />
 
           {/* Top Picks Section */}
